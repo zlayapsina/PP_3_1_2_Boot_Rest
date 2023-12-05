@@ -22,7 +22,7 @@
         <td style="border:1px solid black;">
             <a th:href="@{/edit(id=${user.id})}"><input type="submit" value="edit"/></a></td>
         <td style="border:1px solid black;">
-            <form th:method="POST" th:action="@{/delete(id=${user.id})}">
+            <form th:method="DELETE" th:action="@{/delete(id=${user.id})}">
                 <input type="submit" value="delete"/>
             </form>
         </td>
@@ -31,8 +31,8 @@
     </tbody>
 </table>
 
-<h2>Add</h2>
-<a th:href="@{/new}">Add new user</a>
+<a th:href="@{/registration}">Add new user</a>
+<a th:href="@{/logout}">Logout</a>
 
 </body>
 </html>

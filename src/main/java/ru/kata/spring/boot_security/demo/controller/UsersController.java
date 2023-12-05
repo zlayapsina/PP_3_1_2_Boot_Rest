@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
 import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
 
@@ -18,17 +19,30 @@ import javax.validation.Valid;
 @Controller
 public class UsersController {
     private final UserService userService;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, UserValidator userValidator) {
         this.userService = userService;
+        this.userValidator = userValidator;
     }
 
-    @GetMapping("/")
-    public String homePage() {
-        return "index";
+//    @GetMapping("/")
+//    public String homePage() {
+//        return "index";
+//    }
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
     }
 
+    @GetMapping("/logout")
+    public String logoutPage() {
+        return "redirect:/";
+    }
+
+    //test principals. delete later
     @GetMapping("/showUserInfo")
     public String showUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -43,19 +57,19 @@ public class UsersController {
         return "users";
     }
 
-    @GetMapping(value = "/new")
-    public String newUserPage(ModelMap model) {
-        model.addAttribute("user", new User());
-        return "new";
+    @GetMapping(value = "/registration")
+    public String newUserPage(@ModelAttribute("user") User user) {
+        return "/registration";
     }
 
-    @PostMapping("/new")
+    @PostMapping("/registration")
     public String newUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/new";
+            return "/registration";
         }
-        userService.saveUser(user);
-        return "redirect:/";
+        userService.saveUser(user); //TODO:
+        return "redirect:/login";
     }
 
     @GetMapping(value = "/edit")
