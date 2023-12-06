@@ -17,12 +17,12 @@
     <tbody>
     <tr th:each="user : ${users}">
         <td style="border:1px solid black;"><span th:text="${user.name}"> Name </span></td>
-        <td style="border:1px solid black;"><span th:text="${user.username}"> Surname </span></td>
-        <td style="border:1px solid black;"><span th:text="${user.password}"> Age </span></td>
+        <td style="border:1px solid black;"><span th:text="${user.username}"> Username </span></td>
+        <td style="border:1px solid black;"><span th:text="${user.password}"> Password </span></td>
         <td style="border:1px solid black;">
-            <a th:href="@{/edit(id=${user.id})}"><input type="submit" value="edit"/></a></td>
+            <a th:href="@{/admin/edit(id=${user.id})}"><input type="submit" value="edit"/></a></td>
         <td style="border:1px solid black;">
-            <form th:method="DELETE" th:action="@{/delete(id=${user.id})}">
+            <form th:method="DELETE" th:action="@{/admin/delete(id=${user.id})}">
                 <input type="submit" value="delete"/>
             </form>
         </td>

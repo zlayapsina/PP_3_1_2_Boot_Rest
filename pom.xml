@@ -52,6 +52,27 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+<!--		&lt;!&ndash; SLF4J &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-api</artifactId>-->
+<!--			<version>1.7.30</version>-->
+<!--		</dependency>-->
+<!--		&lt;!&ndash; Logback &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>ch.qos.logback</groupId>-->
+<!--			<artifactId>logback-classic</artifactId>-->
+<!--			<version>1.2.3</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.thymeleaf.extras</groupId>-->
+<!--			<artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
+<!--			<version>3.0.4.RELEASE</version>-->
+
+<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>

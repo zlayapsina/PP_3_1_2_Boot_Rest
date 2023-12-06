@@ -10,9 +10,8 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repo.RolesRepository;
 import ru.kata.spring.boot_security.demo.repo.UsersRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -33,13 +32,18 @@ public class UserService {
     public List<User> getUsers() {
         return usersRepository.findAll();
     }
+
     @Transactional
-    public void saveUser(User user) {
+    public void saveUserWithRole(User user, List<Long> roleIds) {
+        Set<Role> roleSet = roleIds.stream()
+                .map(roleId -> rolesRepository.findById(roleId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        user.setRoles(roleSet);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         usersRepository.save(user);
-        Role role = rolesRepository.findByName("ROLE_ADMIN");
-        user.setRoles(Collections.singleton(role));
     }
+
 
     @Transactional
     public void removeUser(long id) {
@@ -49,11 +53,18 @@ public class UserService {
     @Transactional
     public void editUser(long id, User updatedUser) {
         updatedUser.setId(id);
+        updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         usersRepository.save(updatedUser);
     }
 
     public User showId(long id) {
         Optional<User> showedPerson = usersRepository.findById(id);
         return showedPerson.orElse(null);
+    }
+
+    public User findUserByUsername(String username) {
+        System.out.println(username);
+     return usersRepository.findByUsername(username).orElse(null);
+
     }
 }

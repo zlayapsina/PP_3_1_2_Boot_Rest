@@ -22,12 +22,19 @@
     <input type="text" th:field="*{password}" id="age"/>
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
 
+    <div>
+        <label>Roles:</label>
+        <div th:each="role : ${allRoles}">
+            <input type="checkbox" th:value="${role.id}" th:name="roles" />
+            <label th:text="${role.name}"></label>
+        </div>
+    </div>
+
+
     <br>
     <input type="submit" value="Register!">
 
 </form>
-
-<a th:href="@{/logout}">Logout</a>
 
 </body>
 </html>

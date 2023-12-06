@@ -10,27 +10,34 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserDetailService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Controller
 public class UsersController {
+
     private final UserService userService;
+
     private final UserValidator userValidator;
+    private final RoleService roleService;
 
     @Autowired
-    public UsersController(UserService userService, UserValidator userValidator) {
+    public UsersController(UserService userService, UserValidator userValidator, RoleService roleService) {
         this.userService = userService;
-        this.userValidator = userValidator;
-    }
 
-//    @GetMapping("/")
-//    public String homePage() {
-//        return "index";
-//    }
+        this.userValidator = userValidator;
+        this.roleService = roleService;
+    }
 
     @GetMapping("/login")
     public String loginPage() {
@@ -42,55 +49,59 @@ public class UsersController {
         return "redirect:/";
     }
 
-    //test principals. delete later
-    @GetMapping("/showUserInfo")
-    public String showUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(userDetails.getUser());
+    @GetMapping("/user")
+    public String showUserInfo(ModelMap model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((CustomUserDetails)principal).getUsername();
+        model.addAttribute("user", userService.findUserByUsername(username));
         return "user";
     }
 
-    @GetMapping(value = "/users")
+    @GetMapping(value = "/admin/users")
     public String printUser(ModelMap model) {
         model.addAttribute("users", userService.getUsers());
         return "users";
     }
 
+
     @GetMapping(value = "/registration")
-    public String newUserPage(@ModelAttribute("user") User user) {
-        return "/registration";
+    public String showRegistrationForm(ModelMap model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        return "registration";
     }
 
     @PostMapping("/registration")
-    public String newUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String registerUser(@ModelAttribute("user)") @Valid User user,
+                               @RequestParam(required = false) List<Long> roles,
+                               BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/registration";
+            return "registration";
         }
-        userService.saveUser(user); //TODO:
+        userService.saveUserWithRole(user, roles);
         return "redirect:/login";
     }
 
-    @GetMapping(value = "/edit")
+    @GetMapping(value = "/admin/edit")
     public String editPage(@RequestParam("id") long id, ModelMap model) {
         model.addAttribute("user", userService.showId(id));
-        return "/edit";
+        return "edit";
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/admin/edit")
     public String editUser(@ModelAttribute("user") @Valid User user, @RequestParam("id") long id, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "/edit";
+            return "edit";
         }
         userService.editUser(id, user);
-        return "redirect:/";
+        return "redirect:/admin/users";
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/admin/delete")
     public String deleteUser(@RequestParam("id") long id) {
         userService.removeUser(id);
-        return "redirect:/";
+        return "redirect:/admin/users";
     }
 
 }
