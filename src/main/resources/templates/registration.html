@@ -6,30 +6,29 @@
 </head>
 <body>
 
-<form th:method="POST" th:action="@{/registration}" th:object="${user}">
+<form th:method="POST" th:action="@{/admin/registration}" th:object="${user}">
 
     <input type="hidden" th:field="*{id}" id="id"/>
 
     <label for="name"> Name: </label>
     <input type="text" th:field="*{name}" id="name"/>
-    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 
-    <label for="surname"> Username: </label>
-    <input type="text" th:field="*{username}" id="surname"/>
-    <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
+    <label for="username"> Username: </label>
+    <input type="text" th:field="*{username}" id="username"/>
+    <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username already exists</div>
 
-    <label for="age"> Password: </label>
-    <input type="text" th:field="*{password}" id="age"/>
-    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+    <label for="password"> Password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 
     <div>
         <label>Roles:</label>
         <div th:each="role : ${allRoles}">
-            <input type="checkbox" th:value="${role.id}" th:name="roles" />
+            <input type="checkbox" th:value="${role.id}" th:name="roles"/>
             <label th:text="${role.name}"></label>
         </div>
     </div>
-
 
     <br>
     <input type="submit" value="Register!">

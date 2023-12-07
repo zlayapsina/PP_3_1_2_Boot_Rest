@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repo.UsersRepository;
-import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
 
 import java.util.Optional;
 
@@ -28,7 +27,7 @@ public class UserDetailService implements UserDetailsService {
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found " + username);
         }
-        return new CustomUserDetails(user.get());
+        return user.get(); //CustomUserDetails(user.get())
     }
 
 }

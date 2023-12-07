@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -8,7 +10,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -22,6 +23,7 @@ import java.util.List;
 @Controller
 public class UsersController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
     private final UserService userService;
 
     private final UserValidator userValidator;
@@ -48,7 +50,7 @@ public class UsersController {
     @GetMapping("/user")
     public String showUserInfo(ModelMap model) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((CustomUserDetails)principal).getUsername();
+        String username = ((User)principal).getUsername();
         model.addAttribute("user", userService.findUserByUsername(username));
         return "user";
     }
@@ -60,19 +62,22 @@ public class UsersController {
     }
 
 
-    @GetMapping(value = "/registration")
+    @GetMapping(value = "/admin/registration")
     public String showRegistrationForm(ModelMap model) {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleService.getAllRoles());
         return "registration";
     }
 
-    @PostMapping("/registration")
-    public String registerUser(@ModelAttribute("user)") @Valid User user,
-                               @RequestParam(required = false) List<Long> roles,
+    @PostMapping("/admin/registration")
+    public String registerUser(@ModelAttribute("user") @Valid User user,
+                               @RequestParam(required = false) List<Long> roles, ModelMap model,
                                BindingResult bindingResult) {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            logger.info("Ошибки в форме регистрации: {}", bindingResult);
+            model.addAttribute("user", user);
+            model.addAttribute("allRoles", roleService.getAllRoles());
             return "registration";
         }
         userService.saveUserWithRole(user, roles);

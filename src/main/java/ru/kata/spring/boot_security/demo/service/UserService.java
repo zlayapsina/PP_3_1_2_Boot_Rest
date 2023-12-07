@@ -28,7 +28,6 @@ public class UserService {
         this.rolesRepository = rolesRepository;
     }
 
-    @Query("select u from User u left join fetch u.roles")
     public List<User> getUsers() {
         return usersRepository.findAll();
     }
@@ -44,6 +43,14 @@ public class UserService {
         usersRepository.save(user);
     }
 
+
+
+//    @Transactional(readOnly = true)
+//    public void registerUser(User user) throws RuntimeException {
+//        if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
+//            throw new RuntimeException("Username already exists");
+//        }
+//    }
 
     @Transactional
     public void removeUser(long id) {
@@ -63,8 +70,9 @@ public class UserService {
     }
 
     public User findUserByUsername(String username) {
-        System.out.println(username);
-     return usersRepository.findByUsername(username).orElse(null);
-
+        return usersRepository.findByUsername(username).orElse(null);
+    }
+    public Optional<User> findUserByUsernameValidate(String username) {
+        return usersRepository.findByUsername(username);
     }
 }
