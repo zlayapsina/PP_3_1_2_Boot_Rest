@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.service;
+package ru.kata.spring.boot_security.demo.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,7 +10,6 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repo.UsersRepository;
 
 import java.util.Optional;
-
 
 @Service
 public class UserDetailService implements UserDetailsService {

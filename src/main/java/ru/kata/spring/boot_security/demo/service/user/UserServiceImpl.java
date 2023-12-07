@@ -1,7 +1,6 @@
-package ru.kata.spring.boot_security.demo.service;
+package ru.kata.spring.boot_security.demo.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class UserService {
+public class UserServiceImpl implements UserService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
 
     @Autowired
-    public UserService(UsersRepository usersRepository, PasswordEncoder passwordEncoder, RolesRepository rolesRepository) {
+    public UserServiceImpl(UsersRepository usersRepository, PasswordEncoder passwordEncoder, RolesRepository rolesRepository) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
         this.rolesRepository = rolesRepository;
@@ -42,15 +41,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         usersRepository.save(user);
     }
-
-
-
-//    @Transactional(readOnly = true)
-//    public void registerUser(User user) throws RuntimeException {
-//        if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
-//            throw new RuntimeException("Username already exists");
-//        }
-//    }
 
     @Transactional
     public void removeUser(long id) {

@@ -10,16 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.kata.spring.boot_security.demo.service.UserDetailService;
-
-/**
- * Привет. Решила написать сразу коммент тут, чтобы не тратить время.
- *
- * Роли добавляются только через SQL-запрос - в тз ничего сказано не было про создание ролей отдельно
- * Я оставила возможность гостям и пользователям регистрироваться. Для удобства тестирования
- * Также я сделала возможность выбирать роль админа при регистрации, также для удобства тестирования
- *
- */
+import ru.kata.spring.boot_security.demo.service.user.UserDetailService;
 
 @Configuration
 @EnableWebSecurity
@@ -38,10 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers( "/login").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers( "/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login")
