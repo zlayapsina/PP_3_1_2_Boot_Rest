@@ -27,10 +27,12 @@ public class UserServiceImpl implements UserService {
         this.rolesRepository = rolesRepository;
     }
 
+    @Override
     public List<User> getUsers() {
         return usersRepository.findAll();
     }
 
+    @Override
     @Transactional
     public void saveUserWithRole(User user, List<Long> roleIds) {
         Set<Role> roleSet = roleIds.stream()
@@ -42,26 +44,37 @@ public class UserServiceImpl implements UserService {
         usersRepository.save(user);
     }
 
+    @Override
     @Transactional
     public void removeUser(long id) {
         usersRepository.deleteById(id);
     }
 
+    @Override
     @Transactional
-    public void editUser(long id, User updatedUser) {
+    public void editUser(long id, User updatedUser, Set<Long> roleIds) {
+        Set<Role> roleSet = roleIds.stream()
+                .map(roleId -> rolesRepository.findById(roleId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
         updatedUser.setId(id);
+        updatedUser.setRoles(roleSet);
         updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         usersRepository.save(updatedUser);
     }
 
+    @Override
     public User showId(long id) {
         Optional<User> showedPerson = usersRepository.findById(id);
         return showedPerson.orElse(null);
     }
 
+    @Override
     public User findUserByUsername(String username) {
         return usersRepository.findByUsername(username).orElse(null);
     }
+
+    @Override
     public Optional<User> findUserByUsernameValidate(String username) {
         return usersRepository.findByUsername(username);
     }
