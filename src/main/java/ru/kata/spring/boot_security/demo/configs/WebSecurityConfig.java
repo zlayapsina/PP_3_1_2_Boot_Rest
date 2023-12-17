@@ -10,23 +10,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.kata.spring.boot_security.demo.service.user.UserDetailService;
+import ru.kata.spring.boot_security.demo.service.user.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
-    private final UserDetailService userDetailService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailService userDetailService) {
+    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.successUserHandler = successUserHandler;
-        this.userDetailService = userDetailService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.httpBasic()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers( "/login").permitAll()
@@ -46,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailService)
+        auth.userDetailsService(userDetailsServiceImpl)
                 .passwordEncoder(getPasswordEncoder());
     }
 

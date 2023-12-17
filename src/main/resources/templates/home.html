@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin panel</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1" id="navbarUserText">
+            <!-- Текст о залогиненном пользователе будет вставлен здесь -->
+        </span>
+        <div class="ms-auto">
+            <a href="/logout" class="btn btn-outline-light">Logout</a>
+        </div>
+    </div>
+</nav>
+<!-- Боковое меню для выбора роли -->
+<div class="d-flex align-items-start">
+    <div class="nav flex-column nav-pills me-3 mt-4 ms-4" id="v-pills-tab" role="tablist" aria-orientation="vertical"
+         style="width: 200px">
+        <!-- Кнопки выбора роли -->
+        <button class="nav-link" id="v-pills-admin-tab" data-bs-toggle="pill" data-bs-target="#v-pills-admin"
+                type="button" role="tab" aria-controls="v-pills-admin">
+            Admin
+        </button>
+        <button class="nav-link" id="v-pills-user-tab" data-bs-toggle="pill" data-bs-target="#v-pills-user"
+                type="button" role="tab" aria-controls="v-pills-user">
+            User
+        </button>
+    </div>
+
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade" id="v-pills-user" role="tabpanel" aria-labelledby="v-pills-user-tab" tabindex="0">
+            <!-- Содержимое для залогиненного пользователя -->
+        </div>
+        <div class="tab-pane fade" id="v-pills-admin" role="tabpanel" aria-labelledby="v-pills-admin-tab" tabindex="0">
+            <!-- Содержимое для админа -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script>
+    $(document).ready(() => {
+        fetch('/user/info')
+            .then(response => response.json())
+            .then(user => {
+                $('#navbarUserText').text(`Logged in as: ${user.username} with roles: ${user.roles.join(', ')}`);
+                // Показать или скрыть вкладки в зависимости от роли пользователя
+                if (user.roles.includes('ROLE_ADMIN')) {
+                    $('#v-pills-admin-tab').addClass('active');
+                    $('#v-pills-admin').addClass('show active');
+
+                } else {
+                    $('#v-pills-admin-tab').hide();
+                    $('#v-pills-user-tab').addClass('active');
+                    $('#v-pills-user').addClass('show active');
+                }
+            })
+            .catch(error => console.error('Error loading user info:', error));
+        fetch('/user')
+            .then(response => response.text())
+            .then(html => {
+                $('#v-pills-user').html(html)
+            })
+            .catch(error => console.error('Error loading user page:', error))
+        fetch('/admin')
+            .then(response => response.text())
+            .then(html => {
+                $('#v-pills-admin').html(html)
+            })
+            .catch(error => console.error('Error loading admin page:', error))
+
+    });
+</script>
+</body>
+</html>
