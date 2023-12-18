@@ -2,6 +2,8 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.exception_handling.NoSuchUserException;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -43,25 +45,25 @@ public class AdminsController {
     }
 
     @PostMapping("/users")
-    public List<User> addNewUser(@RequestBody User user) {
+    public ResponseEntity<User> addNewUser(@RequestBody User user) {
         userService.saveUserWithRole(user);
-        return getAllUsers();
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PutMapping("/users")
-    public List<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
         userService.editUser(user);
-        return getAllUsers();
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/users/{id}")
-    public List<User> deleteUser(@PathVariable long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         User user = userService.showId(id);
         if (user == null) {
             throw new NoSuchUserException("There is no user with ID " + id);
         }
         userService.removeUser(id);
-        return getAllUsers();
-
+        return ResponseEntity.ok().build();
     }
+
 }

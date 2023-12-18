@@ -87,15 +87,15 @@
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json()
+                    return response.json();
                 })
-                .then(users => {
-                    fillUsersTable(users)
+                .then(() => {
+                    fetchUsers()
+                    $('#editModal').modal('hide');
                 })
                 .catch(error => {
                     console.error('Error saving modified user:', error);
                 })
-            $('#editModal').modal('hide');
         })
     })
 </script>

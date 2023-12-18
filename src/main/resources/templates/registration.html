@@ -44,10 +44,10 @@
             .then(response => response.json())
             .then(roles => {
                 const $rolesContainer = $('#roles-container');
-                roles?.forEach((index, role) => {
+                roles?.forEach((role, index) => {
                     const $checkboxDiv = $(`<div class="form-check">`)
                     const $checkbox = $(`<input type="checkbox" value="${role.id}" name="roles" id="role${index}" class="form-check-input">`)
-                    const $label = $(`<label for="role${index}" class="form-check-label">`).text(role.name)
+                    const $label = $(`<label for="role${index}" class="form-check-label">${role.name}</label>`)
                     $checkboxDiv.append($checkbox).append($label)
                     $rolesContainer.append($checkboxDiv)
                 });
@@ -84,10 +84,9 @@
                     }
                     return response.json();
                 })
-                .then(users => {
-                    // Обработка успешного ответа
-                    fillUsersTable(users)
-                    $("#registrationForm")[0].reset();
+                .then(() => {
+                    fetchUsers()
+                    $('#registrationForm')[0].reset();
                 })
                 .catch(error => {
                     console.error('Error registering new user:', error);
